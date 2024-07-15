@@ -17,7 +17,7 @@ resource "aws_api_gateway_method" "this" {
   for_each         = var.http_methods
   authorization    = var.authorization
   http_method      = each.value
-  resource_id      = aws_api_gateway_resource.this.id
+  resource_id      = aws_api_gateway_resource.this[each.key].id
   rest_api_id      = aws_api_gateway_rest_api.this.id
   api_key_required = var.api_key_required
   depends_on       = [aws_api_gateway_resource.this]
@@ -25,8 +25,8 @@ resource "aws_api_gateway_method" "this" {
 
 resource "aws_api_gateway_integration" "this" {
   for_each                = var.integration_types
-  http_method             = aws_api_gateway_method.this.http_methods
-  resource_id             = aws_api_gateway_resource.this.id
+  http_method             = aws_api_gateway_method.this[each.key].http_methods
+  resource_id             = aws_api_gateway_resource.this[each.key].id
   rest_api_id             = aws_api_gateway_rest_api.this.id
   type                    = each.value
   uri                     = data.aws_lambda_function.lambda.invoke_arn
@@ -40,8 +40,8 @@ data "aws_lambda_function" "lambda" {
 
 resource "aws_api_gateway_method_response" "response_200" {
   rest_api_id = aws_api_gateway_rest_api.this.id
-  resource_id = aws_api_gateway_resource.this.id
-  http_method = aws_api_gateway_method.this.http_methods
+  resource_id = aws_api_gateway_resource.this[each.key].id
+  http_method = aws_api_gateway_method.this[each.key].http_methods
   status_code = "200"
   response_models = {
     "application/json" = "Empty"
@@ -50,9 +50,9 @@ resource "aws_api_gateway_method_response" "response_200" {
 
 resource "aws_api_gateway_integration_response" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
-  resource_id = aws_api_gateway_resource.this.id
-  http_method = aws_api_gateway_method.this.http_methods
-  status_code = aws_api_gateway_method_response.response_200.status_code
+  resource_id = aws_api_gateway_resource.this[each.key].id
+  http_method = aws_api_gateway_method.this[each.key].http_methods
+  status_code = aws_api_gateway_method_response.response_200[each.key].status_code
   depends_on = [aws_api_gateway_integration.this
   ]
 }
