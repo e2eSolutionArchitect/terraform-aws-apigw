@@ -36,8 +36,8 @@ variable "authorization" {
 
 variable "resource_paths" {
   description = "resource_paths"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "stage_name" {
@@ -55,27 +55,27 @@ variable "apigw_method_path_all" {
 
 variable "http_methods" {
   description = "http_methods"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "integration_types" {
   description = "integration_types"
-  type        = list(string)
-  default     = [] #"MOCK", AWS_PROXY
+  type        = map(string)
+  default     = {} #"MOCK", AWS_PROXY
 }
 
 variable "integration_http_methods" {
   description = "integration_http_methods"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 
 variable "lambda_functions" {
   description = "lambda_function"
-  type        = list(string)
-  default     = []
+  type        = map(string)
+  default     = {}
 }
 
 variable "api_key_required" {
