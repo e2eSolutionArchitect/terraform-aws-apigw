@@ -40,6 +40,12 @@ variable "resource_paths" {
   default     = {}
 }
 
+variable "method_responses" {
+  description = "method_responses"
+  type        = map(string)
+  default     = {}
+}
+
 variable "stage_name" {
   description = "stage_name"
   type        = string
