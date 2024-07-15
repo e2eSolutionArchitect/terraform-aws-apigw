@@ -29,8 +29,8 @@ resource "aws_api_gateway_integration" "this" {
   resource_id             = aws_api_gateway_resource.this[each.key].id
   rest_api_id             = aws_api_gateway_rest_api.this.id
   type                    = each.value
-  uri                     = data.aws_lambda_function.lambda.invoke_arn
-  integration_http_method = aws_api_gateway_method.this.http_methods
+  uri                     = data.aws_lambda_function.lambda[each.key].invoke_arn
+  integration_http_method = aws_api_gateway_method.this[each.key].http_methods
 }
 
 data "aws_lambda_function" "lambda" {
@@ -40,8 +40,8 @@ data "aws_lambda_function" "lambda" {
 
 resource "aws_api_gateway_method_response" "response_200" {
   rest_api_id = aws_api_gateway_rest_api.this.id
-  resource_id = aws_api_gateway_resource.this[each.key].id
-  http_method = aws_api_gateway_method.this[each.key].http_methods
+  resource_id = aws_api_gateway_resource.this.id
+  http_method = aws_api_gateway_method.this.http_methods
   status_code = "200"
   response_models = {
     "application/json" = "Empty"
