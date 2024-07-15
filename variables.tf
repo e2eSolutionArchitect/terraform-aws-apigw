@@ -34,10 +34,10 @@ variable "authorization" {
   default     = null #COGNITO_USER_POOLS
 }
 
-variable "path_part" {
-  description = "path_part"
-  type        = string
-  default     = null
+variable "resource_paths" {
+  description = "resource_paths"
+  type        = list(string)
+  default     = []
 }
 
 variable "stage_name" {
@@ -53,29 +53,29 @@ variable "apigw_method_path_all" {
   default     = null
 }
 
-variable "http_method" {
-  description = "http_method"
-  type        = string
-  default     = null
+variable "http_methods" {
+  description = "http_methods"
+  type        = list(string)
+  default     = []
 }
 
-variable "integration_type" {
-  description = "integration_type"
-  type        = string
-  default     = null #"MOCK", AWS_PROXY
+variable "integration_types" {
+  description = "integration_types"
+  type        = list(string)
+  default     = [] #"MOCK", AWS_PROXY
 }
 
-variable "integration_http_method" {
-  description = "integration_http_method"
-  type        = string
-  default     = null
+variable "integration_http_methods" {
+  description = "integration_http_methods"
+  type        = list(string)
+  default     = []
 }
 
 
-variable "lambda_function_name" {
-  description = "lambda_function_name"
-  type        = string
-  default     = null
+variable "lambda_functions" {
+  description = "lambda_function"
+  type        = list(string)
+  default     = []
 }
 
 variable "api_key_required" {

@@ -7,14 +7,16 @@ resource "aws_api_gateway_rest_api" "this" {
 }
 
 resource "aws_api_gateway_resource" "this" {
+  for_each    = var.resource_paths
   parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-  path_part   = var.path_part
+  path_part   = each.value
   rest_api_id = aws_api_gateway_rest_api.this.id
 }
 
 resource "aws_api_gateway_method" "this" {
+  for_each         = var.http_methods
   authorization    = var.authorization
-  http_method      = var.http_method
+  http_method      = each.value
   resource_id      = aws_api_gateway_resource.this.id
   rest_api_id      = aws_api_gateway_rest_api.this.id
   api_key_required = var.api_key_required
@@ -22,22 +24,24 @@ resource "aws_api_gateway_method" "this" {
 }
 
 resource "aws_api_gateway_integration" "this" {
-  http_method             = aws_api_gateway_method.this.http_method
+  for_each                = var.integration_types
+  http_method             = aws_api_gateway_method.this.http_methods
   resource_id             = aws_api_gateway_resource.this.id
   rest_api_id             = aws_api_gateway_rest_api.this.id
-  type                    = var.integration_type
+  type                    = each.value
   uri                     = data.aws_lambda_function.lambda.invoke_arn
-  integration_http_method = aws_api_gateway_method.this.http_method
+  integration_http_method = aws_api_gateway_method.this.http_methods
 }
 
 data "aws_lambda_function" "lambda" {
-  function_name = var.lambda_function_name
+  for_each      = var.lambda_functions
+  function_name = each.value
 }
 
 resource "aws_api_gateway_method_response" "response_200" {
   rest_api_id = aws_api_gateway_rest_api.this.id
   resource_id = aws_api_gateway_resource.this.id
-  http_method = aws_api_gateway_method.this.http_method
+  http_method = aws_api_gateway_method.this.http_methods
   status_code = "200"
   response_models = {
     "application/json" = "Empty"
@@ -47,7 +51,7 @@ resource "aws_api_gateway_method_response" "response_200" {
 resource "aws_api_gateway_integration_response" "this" {
   rest_api_id = aws_api_gateway_rest_api.this.id
   resource_id = aws_api_gateway_resource.this.id
-  http_method = aws_api_gateway_method.this.http_method
+  http_method = aws_api_gateway_method.this.http_methods
   status_code = aws_api_gateway_method_response.response_200.status_code
   depends_on = [aws_api_gateway_integration.this
   ]
@@ -77,9 +81,10 @@ resource "aws_api_gateway_method_settings" "all" {
 # Lambda Integration
 
 resource "aws_lambda_permission" "permission" {
-  statement_id  = "AllowExecApiGWFor${var.lambda_function_name}"
+  for_each      = var.lambda_functions
+  statement_id  = "AllowExecApiGWFor${each.value}"
   action        = "lambda:InvokeFunction"
-  function_name = var.lambda_function_name
+  function_name = each.value
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.this.execution_arn}/*/*"
 }
