@@ -34,10 +34,16 @@ variable "authorization" {
   default     = null #COGNITO_USER_POOLS
 }
 
-variable "resource_paths" {
-  description = "resource_paths"
-  type        = map(string)
-  default     = {}
+variable "resources" {
+  description = "resource config map"
+  type = map(object({
+    resource_path           = string
+    http_method             = string
+    integration_type        = string
+    integration_http_method = string
+    lambda_function         = string
+  }))
+  default = {}
 }
 
 variable "method_responses" {
