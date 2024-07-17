@@ -140,3 +140,9 @@ variable "webacl_sampled_requests_enabled" {
   type        = bool
   default     = false
 }
+
+variable "domain_name" {
+  description = "API GW domain_name"
+  type        = string
+  default     = null
+}
