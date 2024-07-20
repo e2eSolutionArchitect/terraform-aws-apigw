@@ -118,6 +118,13 @@ variable "web_acl_name" {
   description = "web_acl_name"
   type        = string
 }
+
+variable "is_waf_enable" {
+  description = "is_waf_enable"
+  type        = bool
+  default     = true
+}
+
 variable "waf_scope" {
   description = "waf_scope"
   type        = string

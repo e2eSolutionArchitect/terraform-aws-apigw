@@ -110,6 +110,7 @@ resource "aws_api_gateway_usage_plan_key" "plan_key" {
 }
 
 resource "aws_wafv2_web_acl" "this" {
+  count = (var.is_waf_enable == true ? 1 : 0)
   name  = var.web_acl_name
   scope = var.waf_scope
   rule {
